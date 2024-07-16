@@ -4,21 +4,20 @@ import Link from 'next/link';
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import { signIn } from "next-auth/react"
 export default function Login() {
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
     const [passStatus, setPassStatus] = useState(false)
     const [logStatus, setLogStatus] = useState('')
-    const handleForm = data => {
+    const handleForm = async (data) => {
         const { email, password } = data;
-        axios.post(`http://localhost:5000/decrypt?password=${password}`)
-            .then(result => {
-                const password = result.data
-                console.log(password);
-                loginUser(email, password)
-                    .then(() => console.log("Success"))
-                    .catch(() => console.log("error"))
-            })
-            .catch(error => console.log(error))
+        const resp = await signIn("credentials", {
+            email,
+            password,
+            redirect: true,
+            // callbackUrl: path ? path : "/",
+        });
+        console.log(resp);
     }
     return (
         <div className="w-full lg:max-w-[600px] mx-auto px-4 lg:px-0 mt-12 font-poppins">

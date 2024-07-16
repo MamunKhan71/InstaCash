@@ -1,7 +1,9 @@
 import { connectDB } from "@/app/lib/ConnectDB"
-
+const bcrypt = require('bcrypt')
 export const POST = async (request) => {
     const newUser = await request.json()
+    const hashedPassword = bcrypt.hashSync(newUser.password, 4)
+    newUser.password = hashedPassword
     try {
         const db = await connectDB()
         const userCollection = db.collection("users")
